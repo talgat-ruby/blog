@@ -1,0 +1,60 @@
+{
+	"name": "server",
+	"version": "2.0.0",
+	"description": "Server side of my blog",
+	"main": "index.js",
+	"scripts": {
+		"clean": "rimraf build",
+		"babel": "babel src -d build --copy-files",
+		"nodemon": "nodemon ./src --exec babel-node",
+		"prettier:build": "prettier --write build/**/*.{js,json}",
+		"postinstall": "ln -fsn ../ 'node_modules/>'",
+		"start": "NODE_ENV=development concurrently \"yarn nodemon\"",
+		"prebuild": "yarn clean",
+		"build": "NODE_ENV=production yarn babel && yarn prettier:build",
+		"postbuild": "node build/index.js",
+		"test": "NODE_ENV=test node src/test/ && jest --colors"
+	},
+	"dependencies": {
+		"dotenv": "^4.0.0",
+		"graphql": "^0.12.3",
+		"jsonwebtoken": "^8.1.0",
+		"kcors": "^2.2.1",
+		"koa": "^2.4.1",
+		"koa-graphql": "^0.7.3",
+		"koa-router": "^7.3.0",
+		"koa-send": "^4.1.2",
+		"koa-static": "^4.0.2",
+		"pg": "^7.4.0"
+	},
+	"devDependencies": {
+		"babel-cli": "^6.26.0",
+		"babel-core": "^6.26.0",
+		"babel-eslint": "^8.0.3",
+		"babel-plugin-minify-dead-code-elimination": "^0.2.0",
+		"babel-plugin-transform-class-properties": "^6.24.1",
+		"babel-plugin-transform-node-env-inline": "^0.2.0",
+		"babel-plugin-transform-object-rest-spread": "^6.26.0",
+		"chalk": "^2.3.0",
+		"concurrently": "^3.5.1",
+		"eslint": "^4.13.1",
+		"eslint-plugin-flowtype": "^2.40.1",
+		"eslint-watch": "^3.1.3",
+		"jest": "^22.0.3",
+		"nodemon": "^1.14.1",
+		"prettier": "^1.9.2",
+		"react-generate-template": "^0.1.1",
+		"rimraf": "^2.6.2",
+		"supertest": "^3.0.0"
+	},
+	"engines": {
+		"node": ">=8.1.4",
+		"npm": ">=5.3.0",
+		"yarn": ">=1.3.2"
+	},
+	"jest": {
+		"moduleFileExtensions": ["js", "jsx", "json"]
+	},
+	"license": "MIT",
+	"author": "Talgat Saribayev"
+}
