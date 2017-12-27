@@ -1,21 +1,13 @@
-const {Pool} = require('pg');
+const pg = require('pg');
 
-const {createTables, dropTables} = require('./tables/');
-const test = require('./test-db');
+const {createTables, dropTables, errors} = require('./tables/');
 
-const connect = async () => {
-	try {
-		const pool = new Pool({
-			user: process.env.PG_USER,
-			password: process.env.PG_PASSWORD,
-			host: process.env.PG_HOST,
-			port: process.env.PG_PORT,
-			database: process.env.PG_DB
-		});
-		return await pool.connect();
-	} catch (e) {
-		return Promise.reject(e);
-	}
+const connect = () => {
+	const pool = new pg.Pool({
+		connectionString: process.env.DATABASE_URL
+	});
+	pg.defaults.ssl = true;
+	return pool.connect();
 };
 
-module.exports = {connect, createTables, dropTables, test};
+module.exports = {connect, createTables, dropTables, errors};

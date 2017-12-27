@@ -1,27 +1,25 @@
 const {TABLES} = require('../constants');
 
 const tables = {
-	[TABLES.USERS]: require('./users-table')
+	[TABLES.USERS]: require('./users-table'),
+	[TABLES.POSTS]: require('./posts-table'),
+	[TABLES.COMMENTS]: require('./comments-table')
+};
+const errors = {
+	[TABLES.USERS]: require('./users-table.errors'),
+	[TABLES.POSTS]: require('./posts-table.errors'),
+	[TABLES.COMMENTS]: require('./comments-table.errors')
 };
 
-const createTables = async client => {
-	try {
-		await Promise.all(
-			Object.values(tables).map(({createTable}) => createTable(client))
-		);
-	} catch (e) {
-		return Promise.reject(e);
-	}
-};
+const createTables = client =>
+	Promise.all(
+		Object.values(tables).map(({createTable}) => createTable(client))
+	);
 
-const dropTables = async client => {
-	try {
-		await Promise.all(
-			Object.values(tables).map(({dropTable}) => dropTable(client))
-		);
-	} catch (e) {
-		return Promise.reject(e);
-	}
-};
+const dropTables = client =>
+	Promise.all([
+		tables[TABLES.POSTS].dropTable(client),
+		tables[TABLES.USERS].dropTable(client)
+	]);
 
-module.exports = {createTables, dropTables};
+module.exports = {createTables, dropTables, errors};

@@ -2,10 +2,28 @@ const {TABLES} = require('./constants');
 
 module.exports = async client => {
 	try {
-		await client.query(`
-			INSERT INTO ${TABLES.USERS} VALUES (123, admin, admin@email.com, 1523);
+		const userInsert = await client.query(`
+			INSERT INTO ${TABLES.USERS} (username, email, password) 
+			VALUES ('admWE2', 'admin@email.com', 'HelloWorld@2')
+			RETURNING id, username, email;
 		`);
+		const postInsert = await client.query(`
+			INSERT INTO ${TABLES.POSTS} (user_id, title, preview, content)
+			VALUES ('${userInsert.rows[0].id}', 'HELLO', 'NEED THIS', 'CONTENT')
+			RETURNING id, created;
+		`);
+		const postInsert2 = await client.query(`
+			INSERT INTO ${TABLES.USERS} (username, email, password) 
+			VALUES ('admWE2', 'wer@email.com', 'HelloWorld@2')
+			RETURNING id, username, email;
+		`);
+		console.log('\x1b[33m userInsert -> \x1b[0m', userInsert);
+		console.log('\x1b[33m postInsert -> \x1b[0m', postInsert);
 	} catch (e) {
-		Promise.reject(e);
+		console.log(
+			'\x1b[33m Object.assign({}, e) -> \x1b[0m',
+			Object.assign({}, e)
+		);
+		return Promise.reject(e);
 	}
 };
