@@ -18,6 +18,7 @@ const createTables = client =>
 
 const dropTables = client =>
 	Promise.all([
+		tables[TABLES.COMMENTS].dropTable(client),
 		tables[TABLES.POSTS].dropTable(client),
 		tables[TABLES.USERS].dropTable(client)
 	]);

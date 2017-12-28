@@ -1,6 +1,5 @@
 const modulesProduction = {};
 const modulesDevelopment = {};
-const modulesTest = {};
 
 require('dotenv').config();
 
@@ -29,6 +28,7 @@ const router = new Route();
 	try {
 		await db.dropTables(client);
 		await db.createTables(client);
+		// await db.test(client);
 
 		// router.all(
 		// 	'/graphql',

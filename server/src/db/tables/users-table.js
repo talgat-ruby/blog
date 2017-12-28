@@ -21,13 +21,35 @@ CREATE TABLE IF NOT EXISTS ${table} (
 		table,
 		email
 	)} CHECK (${email} ~* '${regToString(emailRegExp)}'),
-	${password} text NOT NULL CONSTRAINT ${getConstraintName(
-		table,
-		password
-	)} CHECK (
-	${password} ~ '${regToString(passwordRegExp)}'),
+	${password} text,
 	${created} timestamp NOT NULL DEFAULT NOW()
 );
+
+CREATE OR REPLACE FUNCTION encrypt_password_trigger() RETURNS TRIGGER 
+AS $$
+	BEGIN
+		IF NEW.${password} ~ '${regToString(passwordRegExp)}' THEN
+			NEW.${password} := crypt(NEW.${password}, gen_salt('bf', 8));
+		ELSE
+			RAISE check_violation 
+			USING 
+				TABLE = '${table}', 
+				COLUMN = '${password}', 
+				DATATYPE = 'text', 
+				CONSTRAINT = '${getConstraintName(table, password)}',
+				MESSAGE = 'new row for relation "${table}" violates check constraint "${getConstraintName(
+		table,
+		password
+	)}"';
+		END IF;
+		RETURN NEW;
+	END; 
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER encrypt_password
+BEFORE INSERT OR UPDATE ON ${table}
+FOR EACH ROW
+EXECUTE PROCEDURE encrypt_password_trigger()
 	`;
 	return client.query(query);
 };

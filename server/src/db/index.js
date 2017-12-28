@@ -1,6 +1,8 @@
 const pg = require('pg');
 
 const {createTables, dropTables, errors} = require('./tables/');
+const constants = require('./constants');
+const test = require('./test-db');
 
 const connect = () => {
 	const pool = new pg.Pool({
@@ -10,4 +12,4 @@ const connect = () => {
 	return pool.connect();
 };
 
-module.exports = {connect, createTables, dropTables, errors};
+module.exports = {connect, createTables, dropTables, constants, errors, test};
