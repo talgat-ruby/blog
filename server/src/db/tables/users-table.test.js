@@ -19,7 +19,7 @@ beforeAll(async () => {
 		const {rows} = await client.query(`
 			INSERT INTO ${table} (${testHelpers.getKeys(testUser)})
 			VALUES (${testHelpers.getValues(testUser)})
-			RETURNING *
+			RETURNING *;
 		`);
 		insertedUser = rows[0];
 	} catch (e) {
@@ -44,7 +44,6 @@ describe('Test inserted User', () => {
 		expect(testUser[clm.username]).toBe(insertedUser[clm.username]);
 		expect(testUser[clm.email]).toBe(insertedUser[clm.email]);
 	});
-
 	test('all selected cells are same', async () => {
 		await expect(
 			client.query(`
@@ -52,25 +51,88 @@ describe('Test inserted User', () => {
 			`)
 		).resolves.toEqual(expect.objectContaining({rows: [insertedUser]}));
 	});
-
 	test('Password. inserted must not be equal(encrypted) from selected', () => {
 		expect(testUser[clm.password]).not.toBe(insertedUser[clm.password]);
 	});
 });
 
 describe('Test new user constraints', () => {
-	test('check error if insert the same username', async () => {
-		const user = {
-			[clm.username]: testUser[clm.username],
-			[clm.email]: 'test2@test.com',
-			[clm.password]: 'Test2@Test'
-		};
-		await expect(
-			client.query(`
+	const testUser2 = {
+		[clm.username]: 'test2',
+		[clm.email]: 'test2@test.com',
+		[clm.password]: 'Test2@Test'
+	};
+
+	describe('Test username', () => {
+		test('check error for uniqness of username', async () => {
+			const user = {...testUser2, [clm.username]: testUser[clm.username]};
+			await expect(
+				client.query(`
 			INSERT INTO ${table} (${testHelpers.getKeys(user)})
 			VALUES (${testHelpers.getValues(user)})
-			RETURNING *
+			RETURNING *;
 		`)
-		).rejects.toThrowErrorMatchingSnapshot();
+			).rejects.toThrowErrorMatchingSnapshot();
+		});
+		test("check error if user's username is less than 3 char", async () => {
+			const user = {...testUser2, [clm.username]: '2e'};
+			await expect(
+				client.query(`
+			INSERT INTO ${table} (${testHelpers.getKeys(user)})
+			VALUES (${testHelpers.getValues(user)})
+			RETURNING *;
+		`)
+			).rejects.toThrowErrorMatchingSnapshot();
+		});
+	});
+
+	describe('Test email', () => {
+		test('check error for uniqness of email', async () => {
+			const user = {...testUser2, [clm.email]: testUser[clm.email]};
+			await expect(
+				client.query(`
+					INSERT INTO ${table} (${testHelpers.getKeys(user)})
+					VALUES (${testHelpers.getValues(user)})
+					RETURNING *;
+				`)
+			).rejects.toThrowErrorMatchingSnapshot();
+		});
+	});
+
+	describe('Test password', () => {
+		const invalidPasswords = [
+			'aBCDe2#',
+			'abcdef#2',
+			'ABCDEF#2',
+			'aBCDeF##',
+			'aBCDeF22'
+		];
+		const validPassword = 'aBCDeF#2';
+
+		test('check error for invalid passwords', async () => {
+			for (password of invalidPasswords) {
+				const user = {...testUser2, [clm.password]: password};
+				await expect(
+					client.query(`
+					INSERT INTO ${table} (${testHelpers.getKeys(user)})
+					VALUES (${testHelpers.getValues(user)})
+					RETURNING *;
+				`)
+				).rejects.toThrowErrorMatchingSnapshot();
+			}
+		});
+		test('check for valid password', async () => {
+			const user = {...testUser2, [clm.password]: validPassword};
+			await expect(
+				client.query(`
+					INSERT INTO ${table} (${testHelpers.getKeys(user)})
+					VALUES (${testHelpers.getValues(user)})
+					RETURNING ${clm.username}, ${clm.email};
+				`)
+			).resolves.toMatchSnapshot();
+			await client.query(`
+				DELETE FROM ${table} WHERE ${clm.email} = '${user[clm.email]}';
+			`);
+		});
 	});
 });

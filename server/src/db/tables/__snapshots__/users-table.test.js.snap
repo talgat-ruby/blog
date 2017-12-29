@@ -1,3 +1,58 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Test new user constraints check error if insert the same username 1`] = `"duplicate key value violates unique constraint \\"users_username_key\\""`;
+exports[`Test new user constraints Test email check error for uniqness of email 1`] = `"duplicate key value violates unique constraint \\"users_email_key\\""`;
+
+exports[`Test new user constraints Test password check error for invalid passwords 1`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
+
+exports[`Test new user constraints Test password check error for invalid passwords 2`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
+
+exports[`Test new user constraints Test password check error for invalid passwords 3`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
+
+exports[`Test new user constraints Test password check error for invalid passwords 4`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
+
+exports[`Test new user constraints Test password check error for invalid passwords 5`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
+
+exports[`Test new user constraints Test password check for valid password 1`] = `
+Result {
+  "RowCtor": [Function],
+  "_getTypeParser": [Function],
+  "_parsers": Array [
+    [Function],
+    [Function],
+  ],
+  "command": "INSERT",
+  "fields": Array [
+    Field {
+      "columnID": 2,
+      "dataTypeID": 25,
+      "dataTypeModifier": -1,
+      "dataTypeSize": -1,
+      "format": "text",
+      "name": "username",
+      "tableID": 2306257,
+    },
+    Field {
+      "columnID": 3,
+      "dataTypeID": 25,
+      "dataTypeModifier": -1,
+      "dataTypeSize": -1,
+      "format": "text",
+      "name": "email",
+      "tableID": 2306257,
+    },
+  ],
+  "oid": 0,
+  "rowAsArray": false,
+  "rowCount": 1,
+  "rows": Array [
+    anonymous {
+      "email": "test2@test.com",
+      "username": "test2",
+    },
+  ],
+}
+`;
+
+exports[`Test new user constraints Test username check error for uniqness of username 1`] = `"duplicate key value violates unique constraint \\"users_username_key\\""`;
+
+exports[`Test new user constraints Test username check error if user's username is less than 3 char 1`] = `"new row for relation \\"users\\" violates check constraint \\"users_username_constraint\\""`;

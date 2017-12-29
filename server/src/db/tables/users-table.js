@@ -3,7 +3,7 @@ const {TABLES, COLUMNS} = require('../constants');
 
 const table = TABLES.USERS;
 
-const emailRegExp = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
+const emailRegExp = /^[a-z0-9_%+.-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
 const passwordRegExp = /^.*(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$!@_ %#~^*$&()?\-+=]).*$/;
 
 const createTable = client => {
