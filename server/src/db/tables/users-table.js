@@ -46,10 +46,12 @@ AS $$
 	END; 
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS encrypt_password ON ${table};
+
 CREATE TRIGGER encrypt_password
 BEFORE INSERT OR UPDATE ON ${table}
 FOR EACH ROW
-EXECUTE PROCEDURE encrypt_password_trigger()
+EXECUTE PROCEDURE encrypt_password_trigger();
 	`;
 	return client.query(query);
 };
