@@ -3,9 +3,6 @@ const {TABLES, COLUMNS} = require('../constants');
 
 const table = TABLES.COMMENTS;
 
-const emailRegExp = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
-const passwordRegExp = /^.*(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$!@_ %#~^*$&()?\-+=]).*$/;
-
 const createTable = client => {
 	const {id, user_id, post_id, content, created, updated} = COLUMNS[table];
 	const query = `

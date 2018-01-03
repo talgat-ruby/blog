@@ -8,6 +8,7 @@ const Koa = require('koa');
 const Route = require('koa-router');
 const koaGraphQL = require('koa-graphql');
 if (process.env.NODE_ENV === 'production') {
+	// Set up nginx
 	modulesProduction.cors = require('kcors');
 	modulesProduction.serve = require('koa-static');
 	modulesProduction.send = require('koa-send');
@@ -26,26 +27,26 @@ const router = new Route();
 (async () => {
 	const client = await db.connect();
 	try {
-		await db.dropTables(client);
+		// await db.dropTables(client);
 		await db.createTables(client);
 		// await db.test(client);
 
-		// router.all(
-		// 	'/graphql',
-		// 	koaGraphQL(
-		// 		request =>
-		// 			process.env.NODE_ENV === 'production'
-		// 				? {
-		// 						schema,
-		// 						context: {request, db}
-		// 					}
-		// 				: {
-		// 						schema,
-		// 						graphiql: true,
-		// 						context: {request, db}
-		// 					}
-		// 	)
-		// );
+		router.all(
+			'/graphql',
+			koaGraphQL(
+				request =>
+					process.env.NODE_ENV === 'production'
+						? {
+								schema,
+								context: {request, db}
+							}
+						: {
+								schema,
+								graphiql: true,
+								context: {request, db}
+							}
+			)
+		);
 	} finally {
 		client.release();
 	}
