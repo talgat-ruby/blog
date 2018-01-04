@@ -11,7 +11,6 @@ const CommentType = new GraphQLObjectType({
 	name: 'Comment',
 	fields: () => ({
 		id: {type: new GraphQLNonNull(GraphQLID)},
-		text: {type: new GraphQLNonNull(GraphQLString)},
 		content: {type: new GraphQLNonNull(GraphQLString)},
 		user: {
 			type: UserType,

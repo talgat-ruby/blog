@@ -56,45 +56,30 @@ const mutations = new GraphQLObjectType({
 					return Promise.reject(e);
 				}
 			}
+		},
+		addComment: {
+			type: CommentType,
+			args: {
+				postId: {type: new GraphQLNonNull(GraphQLID)},
+				content: {type: new GraphQLNonNull(GraphQLString)}
+			},
+			resolve: async (
+				parentValue,
+				{postId, content},
+				{db, request: {header: {authorization}}}
+			) => {
+				try {
+					const {id} = jwt.verify(authorization, process.env.AUTH_SECRET_KEY);
+					return (await db.query(`
+						INSERT INTO ${db.constants.TABLES.COMMENTS} (user_id, post_id, content)
+						VALUES ('${id}', '${postId}', '${content}')
+						RETURNING *;
+					`)).rows[0];
+				} catch (e) {
+					return Promise.reject(e);
+				}
+			}
 		}
-		// addComment: {
-		// 	type: CommentType,
-		// 	args: {
-		// 		postId: {type: new GraphQLNonNull(GraphQLID)},
-		// 		text: {type: new GraphQLNonNull(GraphQLString)}
-		// 	},
-		// 	resolve: async (
-		// 		parentValue,
-		// 		{postId, text},
-		// 		{db, request: {header: {authorization}}}
-		// 	) => {
-		// 		try {
-		// 			const {_id} = jwt.verify(authorization, AUTH_SECRET_KEY);
-		// 			const user = await db
-		// 				.collection(COLLECTIONS.USERS)
-		// 				.findOne({_id: ObjectID(_id)});
-		// 			if (user) {
-		// 				const {ops: [data]} = await db
-		// 					.collection(COLLECTIONS.COMMENTS)
-		// 					.insertOne({
-		// 						text,
-		// 						created: new Date().toJSON(),
-		// 						userId: user._id,
-		// 						postId: ObjectID(postId)
-		// 					});
-		// 				return data;
-		// 			} else {
-		// 				throw new Error('User not found!');
-		// 			}
-		// 		} catch (e) {
-		// 			if (e && e.message) {
-		// 				return new Error(e.message);
-		// 			} else {
-		// 				return new Error('Smth went wrong!');
-		// 			}
-		// 		}
-		// 	}
-		// }
 	}
 });
 module.exports = mutations;
