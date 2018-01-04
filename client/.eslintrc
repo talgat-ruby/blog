@@ -1,0 +1,4 @@
+{
+  "extends": ["react-app", "airbnb", "plugin:flowtype/recommended", "prettier"],
+  "plugins": ["flowtype", "prettier"]
+}

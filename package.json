@@ -15,7 +15,12 @@
 		"type": "git",
 		"url": "git+https://github.com/talgat-ruby/blog-graphql.git"
 	},
-	"keywords": ["blog", "graphql", "react", "koa"],
+	"keywords": [
+		"blog",
+		"graphql",
+		"react",
+		"koa"
+	],
 	"author": "Talgat Saribayev",
 	"license": "ISC",
 	"bugs": {
@@ -27,6 +32,7 @@
 		"rimraf": "^2.6.2"
 	},
 	"dependencies": {
+		"react-router-dom": "^4.2.2",
 		"yargs": "^10.0.3"
 	}
 }
