@@ -2,15 +2,15 @@
 
 exports[`Test new user constraints Test email check error for uniqness of email 1`] = `"duplicate key value violates unique constraint \\"users_email_key\\""`;
 
-exports[`Test new user constraints Test password check error for invalid passwords 1`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
+exports[`Test new user constraints Test password chech error for invalid passwords check error for password - ABCDEF#2 1`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
 
-exports[`Test new user constraints Test password check error for invalid passwords 2`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
+exports[`Test new user constraints Test password chech error for invalid passwords check error for password - aBCDe2# 1`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
 
-exports[`Test new user constraints Test password check error for invalid passwords 3`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
+exports[`Test new user constraints Test password chech error for invalid passwords check error for password - aBCDeF## 1`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
 
-exports[`Test new user constraints Test password check error for invalid passwords 4`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
+exports[`Test new user constraints Test password chech error for invalid passwords check error for password - aBCDeF22 1`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
 
-exports[`Test new user constraints Test password check error for invalid passwords 5`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
+exports[`Test new user constraints Test password chech error for invalid passwords check error for password - abcdef#2 1`] = `"new row for relation \\"users\\" violates check constraint \\"users_password_constraint\\""`;
 
 exports[`Test new user constraints Test password check for valid password 1`] = `
 Result {
@@ -29,7 +29,7 @@ Result {
       "dataTypeSize": -1,
       "format": "text",
       "name": "username",
-      "tableID": 2306257,
+      "tableID": 2462337,
     },
     Field {
       "columnID": 3,
@@ -38,7 +38,7 @@ Result {
       "dataTypeSize": -1,
       "format": "text",
       "name": "email",
-      "tableID": 2306257,
+      "tableID": 2462337,
     },
   ],
   "oid": 0,

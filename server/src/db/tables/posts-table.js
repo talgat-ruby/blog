@@ -14,10 +14,9 @@ CREATE TABLE IF NOT EXISTS ${table} (
 	${id} text PRIMARY KEY UNIQUE DEFAULT CONCAT('post-', gen_random_uuid()),
 	${user_id} text REFERENCES ${TABLES.USERS} ON DELETE CASCADE,
 	${title} text UNIQUE NOT NULL,
-	${preview} text NOT NULL CONSTRAINT ${constraint.getName(
-		table,
-		preview
-	)} CHECK (char_length(${preview}) <= 150),
+	${preview} text NOT NULL 
+	CONSTRAINT ${constraint.getName({table, column: preview})} 
+	CHECK (char_length(${preview}) <= 150),
 	${content} text NOT NULL,
 	${created} timestamp NOT NULL DEFAULT NOW(),
 	${updated} timestamp NOT NULL DEFAULT NOW()

@@ -14,12 +14,11 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE IF NOT EXISTS ${table} (
 	${id} text PRIMARY KEY UNIQUE DEFAULT CONCAT('user-', gen_random_uuid()),
 	${username} text UNIQUE NOT NULL 
-	CONSTRAINT ${constraint.getName(table, username)} 
+	CONSTRAINT ${constraint.getName({table, column: username})} 
 	CHECK (char_length(${username}) >= 3),
-	${email} text UNIQUE NOT NULL CONSTRAINT ${constraint.getName(
-		table,
-		email
-	)} CHECK (${email} ~* '${regToString(emailRegExp)}'),
+	${email} text UNIQUE NOT NULL 
+	CONSTRAINT ${constraint.getName({table, column: email})} 
+	CHECK (${email} ~* '${regToString(emailRegExp)}'),
 	${password} text,
 	${created} timestamp NOT NULL DEFAULT NOW(),
 	${updated} timestamp NOT NULL DEFAULT NOW()
@@ -36,10 +35,9 @@ AS $$
 				TABLE = '${table}', 
 				COLUMN = '${password}', 
 				DATATYPE = 'text', 
-				CONSTRAINT = '${constraint.getName(table, password)}',
+				CONSTRAINT = '${constraint.getName({table, column: password})}',
 				MESSAGE = 'new row for relation "${table}" violates check constraint "${constraint.getName(
-		table,
-		password
+		{table, column: password}
 	)}"';
 		END IF;
 		RETURN NEW;
