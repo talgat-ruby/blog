@@ -1,6 +1,5 @@
 {
   "plugins": [
-    "transform-object-rest-spread",
     "transform-class-properties",
     "babel-plugin-transform-node-env-inline",
     "minify-dead-code-elimination"

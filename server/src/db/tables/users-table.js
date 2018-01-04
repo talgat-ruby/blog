@@ -1,4 +1,4 @@
-const {regToString, getConstraintName} = require('>/src/helpers/');
+const {regToString, constraint} = require('>/src/helpers/');
 const {TABLES, COLUMNS} = require('../constants');
 
 const table = TABLES.USERS;
@@ -7,22 +7,22 @@ const emailRegExp = /^[a-z0-9_%+.-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
 const passwordRegExp = /^.*(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$!@_ %#~^*$&()?\-+=]).*$/;
 
 const createTable = client => {
-	const {id, username, email, password, created} = COLUMNS[table];
+	const {id, username, email, password, created, updated} = COLUMNS[table];
 	const query = `
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TABLE IF NOT EXISTS ${table} (
 	${id} text PRIMARY KEY UNIQUE DEFAULT CONCAT('user-', gen_random_uuid()),
-	${username} text UNIQUE NOT NULL CONSTRAINT ${getConstraintName(
-		table,
-		username
-	)} CHECK (char_length(${username}) >= 3),
-	${email} text UNIQUE NOT NULL CONSTRAINT ${getConstraintName(
+	${username} text UNIQUE NOT NULL 
+	CONSTRAINT ${constraint.getName(table, username)} 
+	CHECK (char_length(${username}) >= 3),
+	${email} text UNIQUE NOT NULL CONSTRAINT ${constraint.getName(
 		table,
 		email
 	)} CHECK (${email} ~* '${regToString(emailRegExp)}'),
 	${password} text,
-	${created} timestamp NOT NULL DEFAULT NOW()
+	${created} timestamp NOT NULL DEFAULT NOW(),
+	${updated} timestamp NOT NULL DEFAULT NOW()
 );
 
 CREATE OR REPLACE FUNCTION encrypt_password_trigger() RETURNS TRIGGER 
@@ -36,8 +36,8 @@ AS $$
 				TABLE = '${table}', 
 				COLUMN = '${password}', 
 				DATATYPE = 'text', 
-				CONSTRAINT = '${getConstraintName(table, password)}',
-				MESSAGE = 'new row for relation "${table}" violates check constraint "${getConstraintName(
+				CONSTRAINT = '${constraint.getName(table, password)}',
+				MESSAGE = 'new row for relation "${table}" violates check constraint "${constraint.getName(
 		table,
 		password
 	)}"';

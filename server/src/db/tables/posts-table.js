@@ -1,4 +1,4 @@
-const {regToString, getConstraintName} = require('>/src/helpers/');
+const {regToString, constraint} = require('>/src/helpers/');
 const {TABLES, COLUMNS} = require('../constants');
 
 const table = TABLES.POSTS;
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS ${table} (
 	${id} text PRIMARY KEY UNIQUE DEFAULT CONCAT('post-', gen_random_uuid()),
 	${user_id} text REFERENCES ${TABLES.USERS} ON DELETE CASCADE,
 	${title} text UNIQUE NOT NULL,
-	${preview} text NOT NULL CONSTRAINT ${getConstraintName(
+	${preview} text NOT NULL CONSTRAINT ${constraint.getName(
 		table,
 		preview
 	)} CHECK (char_length(${preview}) <= 150),

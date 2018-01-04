@@ -1,4 +1,3 @@
-const {ObjectID} = require('mongodb');
 const {
 	GraphQLNonNull,
 	GraphQLID,
@@ -6,21 +5,23 @@ const {
 	GraphQLString
 } = require('graphql');
 
-const {COLLECTIONS} = require('../../constants/db-constants');
-
 const UserType = require('./user-type');
 
 const CommentType = new GraphQLObjectType({
 	name: 'Comment',
 	fields: () => ({
-		_id: {type: new GraphQLNonNull(GraphQLID)},
+		id: {type: new GraphQLNonNull(GraphQLID)},
 		text: {type: new GraphQLNonNull(GraphQLString)},
-		created: {type: new GraphQLNonNull(GraphQLString)},
+		content: {type: new GraphQLNonNull(GraphQLString)},
 		user: {
 			type: UserType,
-			resolve: ({userId}, parentValue, {db}) =>
-				db.collection(COLLECTIONS.USERS).findOne({_id: ObjectID(userId)})
-		}
+			resolve: async ({userId}, parentValue, {db}) =>
+				(await db.query(
+					`SELECT * FROM ${db.constants.TABLES.USERS} WHERE id='${userId}'`
+				)).rows[0]
+		},
+		created: {type: new GraphQLNonNull(GraphQLString)},
+		updated: {type: new GraphQLNonNull(GraphQLString)}
 	})
 });
 module.exports = CommentType;

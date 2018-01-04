@@ -1,8 +1,6 @@
 const jwt = require('jsonwebtoken');
 const {GraphQLNonNull, GraphQLObjectType, GraphQLString} = require('graphql');
 
-const {AUTH_SECRET_KEY} = require('../../constants/app-constants');
-
 const UserType = new GraphQLObjectType({
 	name: 'User',
 	fields: () => ({
@@ -10,8 +8,10 @@ const UserType = new GraphQLObjectType({
 		email: {type: new GraphQLNonNull(GraphQLString)},
 		token: {
 			type: new GraphQLNonNull(GraphQLString),
-			resolve: ({_id}) => jwt.sign({_id}, AUTH_SECRET_KEY)
-		}
+			resolve: ({id}) => jwt.sign({id}, process.env.AUTH_SECRET_KEY)
+		},
+		created: {type: new GraphQLNonNull(GraphQLString)},
+		updated: {type: new GraphQLNonNull(GraphQLString)}
 	})
 });
 module.exports = UserType;

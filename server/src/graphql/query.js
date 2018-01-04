@@ -1,4 +1,3 @@
-const {ObjectID} = require('mongodb');
 const jwt = require('jsonwebtoken');
 const {
 	GraphQLNonNull,
@@ -8,9 +7,6 @@ const {
 	GraphQLInt
 } = require('graphql');
 
-const {AUTH_SECRET_KEY} = require('>/src/constants/app-constants');
-const {COLLECTIONS} = require('>/src/constants/db-constants');
-
 const {UserType, PostType} = require('./types/');
 
 const query = new GraphQLObjectType({
@@ -18,14 +14,15 @@ const query = new GraphQLObjectType({
 	fields: {
 		user: {
 			type: UserType,
-			resolve: (
+			resolve: async (
 				parentValue,
 				args,
 				{db, request: {header: {authorization}}}
 			) => {
 				try {
-					const {_id} = jwt.verify(authorization, AUTH_SECRET_KEY);
-					return db.collection(COLLECTIONS.USERS).findOne({_id: ObjectID(_id)});
+					//  TODO: const {id} = jwt.verify(authorization, process.env.AUTH_SECRET_KEY);
+					return (await db.query(`SELECT * FROM ${db.constants.TABLES.USERS}`)) // TODO: WHERE id='${id}'
+						.rows[0];
 				} catch (e) {
 					return Promise.reject(e);
 				}
@@ -37,22 +34,23 @@ const query = new GraphQLObjectType({
 				limit: {type: new GraphQLNonNull(GraphQLInt)},
 				offset: {type: new GraphQLNonNull(GraphQLInt)}
 			},
-			resolve: (parentValue, {offset, limit}, {db}) =>
-				db
-					.collection(COLLECTIONS.POSTS)
-					.find()
-					.skip(offset)
-					.limit(limit)
-					.sort({_id: -1})
-					.toArray()
+			resolve: async (parentValue, {offset, limit}, {db}) =>
+				(await db.query(
+					`SELECT * FROM ${db.constants.TABLES.POSTS}
+					ORDER BY created 
+					LIMIT ${limit} 
+					OFFSET ${offset}`
+				)).rows
 		},
 		post: {
 			type: PostType,
 			args: {
 				id: {type: new GraphQLNonNull(GraphQLID)}
 			},
-			resolve: (parentValue, {id}, {db}) =>
-				db.collection(COLLECTIONS.POSTS).findOne({_id: ObjectID(id)})
+			resolve: async (parentValue, {id}, {db}) =>
+				(await db.query(
+					`SELECT * FROM ${db.constants.TABLES.POSTS} WHERE id='${id}'`
+				)).rows[0]
 		}
 	}
 });

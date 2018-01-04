@@ -1,4 +1,4 @@
-const {regToString, getConstraintName} = require('>/src/helpers/');
+const {regToString} = require('>/src/helpers/');
 const {TABLES, COLUMNS} = require('../constants');
 
 const table = TABLES.COMMENTS;

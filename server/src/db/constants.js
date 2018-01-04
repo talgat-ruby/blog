@@ -11,7 +11,8 @@ exports.COLUMNS = {
 		username: 'username',
 		email: 'email',
 		password: 'password',
-		created: 'created'
+		created: 'created',
+		updated: 'updated'
 	},
 	[TABLES.POSTS]: {
 		id: 'id',

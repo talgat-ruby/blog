@@ -1,4 +1,3 @@
-const {ObjectID} = require('mongodb');
 const {
 	GraphQLNonNull,
 	GraphQLObjectType,
@@ -7,27 +6,26 @@ const {
 	GraphQLString
 } = require('graphql');
 
-const {COLLECTIONS} = require('../../constants/db-constants');
-
 const CommentType = require('./comment-type');
 
 const PostType = new GraphQLObjectType({
 	name: 'Post',
 	fields: () => ({
-		_id: {type: new GraphQLNonNull(GraphQLID)},
+		id: {type: new GraphQLNonNull(GraphQLID)},
 		title: {type: new GraphQLNonNull(GraphQLString)},
 		preview: {type: new GraphQLNonNull(GraphQLString)},
-		created: {type: new GraphQLNonNull(GraphQLString)},
-		templateName: {type: new GraphQLNonNull(GraphQLString)},
+		content: {type: new GraphQLNonNull(GraphQLString)},
 		comments: {
 			type: new GraphQLList(CommentType),
-			resolve: ({_id}, args, {db}) =>
-				db
-					.collection(COLLECTIONS.COMMENTS)
-					.find({postId: ObjectID(_id)})
-					.sort({_id: -1})
-					.toArray()
-		}
+			resolve: async ({id}, args, {db}) =>
+				(await db.query(
+					`SELECT * FROM ${
+						db.constants.TABLES.COMMENTS
+					} WHERE post_id='${id}' ORDER BY created`
+				)).rows
+		},
+		created: {type: new GraphQLNonNull(GraphQLString)},
+		updated: {type: new GraphQLNonNull(GraphQLString)}
 	})
 });
 module.exports = PostType;

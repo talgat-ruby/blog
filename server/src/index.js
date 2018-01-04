@@ -19,37 +19,38 @@ const {PORT, CLIENT_PATH} = require('./constants/app-constants');
 
 // methods, functions, utilities;
 const db = require('./db/');
-// const schema = require('./graphql/');
+const schema = require('./graphql/');
 
 const app = new Koa();
 const router = new Route();
 
 (async () => {
-	const client = await db.connect();
-	try {
-		// await db.dropTables(client);
-		await db.createTables(client);
-		// await db.test(client);
+	return db.connect(async client => {
+		try {
+			await db.dropTables(client);
+			await db.createTables(client);
+			await db.test(client);
 
-		router.all(
-			'/graphql',
-			koaGraphQL(
-				request =>
-					process.env.NODE_ENV === 'production'
-						? {
-								schema,
-								context: {request, db}
-							}
-						: {
-								schema,
-								graphiql: true,
-								context: {request, db}
-							}
-			)
-		);
-	} finally {
-		client.release();
-	}
+			router.all(
+				'/graphql',
+				koaGraphQL(
+					request =>
+						process.env.NODE_ENV === 'production'
+							? {
+									schema,
+									context: {request, db}
+								}
+							: {
+									schema,
+									graphiql: true,
+									context: {request, db}
+								}
+				)
+			);
+		} catch (e) {
+			return Promise.reject(e);
+		}
+	});
 })().catch(e => console.log(e.stack));
 
 app.use(router.routes()).use(router.allowedMethods());
